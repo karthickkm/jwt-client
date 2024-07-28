@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -39,6 +40,19 @@ public class ClientController {
         if(StringUtils.hasText(jwtToken)) {
             productList = (List<Product>) productService.getAllProducts(jwtToken);
             return new ResponseEntity<>(productList, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @GetMapping("/getProduct/{productId}")
+    public ResponseEntity<?> getProduct(@PathVariable("productId") int productId) throws Exception {
+        AuthRequest authRequest = new AuthRequest("user", "user");
+        String jwtToken = productService.authenticate(authRequest);
+        logger.info("Token : {}",jwtToken);
+        Product product;
+        if(StringUtils.hasText(jwtToken)) {
+            product = productService.getProduct(productId, jwtToken);
+            return new ResponseEntity<>(product, HttpStatus.OK);
         }
         return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
     }

@@ -1,6 +1,7 @@
 package com.jwtclient.jwt_client.service;
 
 import com.jwtclient.jwt_client.dto.AuthRequest;
+import com.jwtclient.jwt_client.dto.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -20,6 +21,11 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<?> getAllProducts(String jwtToken) throws Exception {
         return webClient.get().uri("/products/all").headers(httpHeaders -> httpHeaders.setBearerAuth(jwtToken)).retrieve().bodyToMono(List.class).block();
+    }
+
+    @Override
+    public Product getProduct(int prodId, String jwtToken) throws Exception {
+        return webClient.get().uri("/products/{prodId}", prodId).headers(httpHeaders -> httpHeaders.setBearerAuth(jwtToken)).retrieve().bodyToMono(Product.class).block();
     }
 
     @Override
